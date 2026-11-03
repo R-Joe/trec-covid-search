@@ -1,0 +1,5 @@
+
+streamlit
+opensearch-py
+certifi
+scikit-learn
