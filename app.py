@@ -24,12 +24,12 @@ st.set_page_config(
 )
 
 st.title("TREC-COVID Search")
+st.caption("Sistema de recuperação de informação — TREC-COVID, Round 1")
 
-st.write(
-    "Mecanismo de recuperação de informação para a coleção "
-    "TREC-COVID — Round 1."
+st.markdown(
+    "Explore a coleção de artigos científicos sobre COVID-19 "
+    "utilizando os modelos de recuperação BM25 e TF-IDF."
 )
-
 
 # --------------------------------------------------
 # Conexão com OpenSearch
