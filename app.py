@@ -140,42 +140,38 @@ def tokenize(text):
 # --------------------------------------------------
 
 def pesquisar_bm25(client, consulta, quantidade=10):
-
-    consulta_processada = " ".join(tokenize(consulta))
-
-    if not consulta_processada:
-        return [], 0
-
-    body = {
-        "size": quantidade,
-        "track_total_hits": True,
-        "_source": [
-            "cord_uid",
-            "title",
-            "abstract"
-        ],
-        "query": {
-            "match": {
-                "text_processed": consulta_processada
+    resposta = client.search(
+        index="trec-covid-r1-bm25-v1",
+        body={
+            "size": quantidade,
+            "track_total_hits": True,
+            "_source": ["cord_uid", "title", "abstract"],
+            "query": {
+                "match": {
+                    "text": {
+                        "query": consulta
+                    }
+                }
             }
         },
-        "sort": [
-            {"_score": "desc"},
-            {"cord_uid": "asc"}
-        ]
-    }
-
-    resposta = client.search(
-        index="trec-covid",
-        body=body,
         request_timeout=60
     )
 
-    resultados = resposta["hits"]["hits"]
+    resultados = []
+
+    for hit in resposta["hits"]["hits"]:
+        source = hit["_source"]
+
+        resultados.append({
+            "cord_uid": source["cord_uid"],
+            "title": source["title"],
+            "abstract": source["abstract"],
+            "score": hit["_score"]
+        })
+
     total = resposta["hits"]["total"]["value"]
 
     return resultados, total
-
 
 # --------------------------------------------------
 # Pesquisa TF-IDF vetorial
