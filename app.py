@@ -341,6 +341,49 @@ if pesquisar:
 
 
 # --------------------------------------------------
+# Avaliação dos modelos
+# --------------------------------------------------
+
+st.divider()
+
+st.subheader("Avaliação dos modelos")
+
+st.markdown(
+    "Desempenho médio dos modelos nos 30 tópicos "
+    "da coleção TREC-COVID — Round 1."
+)
+
+metricas = pd.DataFrame({
+    "Métrica": ["AP@1000", "AP@10", "P@10", "nDCG@10"],
+    "BM25": [0.1743, 0.0566, 0.4600, 0.3593],
+    "TF-IDF": [0.1180, 0.0359, 0.3233, 0.2256]
+})
+
+st.dataframe(
+    metricas,
+    hide_index=True,
+    use_container_width=True,
+    column_config={
+        "Métrica": st.column_config.TextColumn("Métrica"),
+        "BM25": st.column_config.NumberColumn(
+            "BM25",
+            format="%.4f"
+        ),
+        "TF-IDF": st.column_config.NumberColumn(
+            "TF-IDF",
+            format="%.4f"
+        )
+    }
+)
+
+st.caption(
+    "AP: Average Precision | P: Precision | "
+    "nDCG: normalized Discounted Cumulative Gain. "
+    "Valores mais altos indicam melhor desempenho."
+)
+
+
+# --------------------------------------------------
 # Rodapé
 # --------------------------------------------------
 
