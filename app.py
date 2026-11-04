@@ -97,8 +97,7 @@ def carregar_tfidf():
             gdown.download(
                 url,
                 caminho,
-                quiet=False,
-                fuzzy=True
+                quiet=False
             )
 
         if not os.path.exists(caminho) or os.path.getsize(caminho) == 0:
