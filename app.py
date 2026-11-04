@@ -289,8 +289,8 @@ if st.button("Pesquisar", type="primary"):
 
                     if modelo == "BM25":
 
-                        doc = resultado["_source"]
-                        score = resultado["_score"]
+                        doc = resultado
+                        score = resultado["score"]
 
                     else:
 
