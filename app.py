@@ -1,3 +1,4 @@
+
 import re
 import os
 import joblib
@@ -30,6 +31,7 @@ st.markdown(
     "Explore a coleção de artigos científicos sobre COVID-19 "
     "utilizando os modelos de recuperação BM25 e TF-IDF."
 )
+
 
 # --------------------------------------------------
 # Conexão com OpenSearch
@@ -140,6 +142,7 @@ def tokenize(text):
 # --------------------------------------------------
 
 def pesquisar_bm25(client, consulta, quantidade=10):
+
     resposta = client.search(
         index="trec-covid-r1-bm25-v1",
         body={
@@ -160,6 +163,7 @@ def pesquisar_bm25(client, consulta, quantidade=10):
     resultados = []
 
     for hit in resposta["hits"]["hits"]:
+
         source = hit["_source"]
 
         resultados.append({
@@ -172,6 +176,7 @@ def pesquisar_bm25(client, consulta, quantidade=10):
     total = resposta["hits"]["total"]["value"]
 
     return resultados, total
+
 
 # --------------------------------------------------
 # Pesquisa TF-IDF vetorial
@@ -214,28 +219,46 @@ def pesquisar_tfidf(
 
 
 # --------------------------------------------------
-# Interface
+# Interface de busca
 # --------------------------------------------------
 
-consulta = st.text_input(
-    "Digite sua consulta em inglês:",
-    placeholder="Ex.: coronavirus origin"
+st.subheader("Busca")
+
+col1, col2, col3 = st.columns([3, 1, 1])
+
+with col1:
+
+    consulta = st.text_input(
+        "Consulta em inglês",
+        placeholder="Ex.: coronavirus transmission routes"
+    )
+
+with col2:
+
+    modelo = st.selectbox(
+        "Modelo",
+        ["BM25", "TF-IDF"]
+    )
+
+with col3:
+
+    quantidade = st.selectbox(
+        "Resultados",
+        [5, 10, 20],
+        index=1
+    )
+
+pesquisar = st.button(
+    "Pesquisar",
+    type="primary"
 )
 
-modelo = st.radio(
-    "Modelo de recuperação:",
-    ["BM25", "TF-IDF"],
-    horizontal=True
-)
 
-quantidade = st.selectbox(
-    "Quantidade de resultados:",
-    [5, 10, 20],
-    index=1
-)
+# --------------------------------------------------
+# Execução da busca e apresentação dos resultados
+# --------------------------------------------------
 
-
-if st.button("Pesquisar", type="primary"):
+if pesquisar:
 
     if not consulta.strip():
 
@@ -271,8 +294,10 @@ if st.button("Pesquisar", type="primary"):
 
             st.subheader("Resultados da busca")
 
-            st.write(f"Modelo: **{modelo}**")
-            st.write(f"Documentos encontrados: **{total:,}**")
+            st.caption(
+                f"Modelo: {modelo} | "
+                f"Documentos encontrados: {total:,}"
+            )
 
             if len(resultados) == 0:
 
@@ -280,25 +305,17 @@ if st.button("Pesquisar", type="primary"):
 
             else:
 
-                for posicao, resultado in enumerate(
+                registros = (
                     resultados.to_dict("records")
                     if isinstance(resultados, pd.DataFrame)
-                    else resultados,
-                    start=1
-                ):
+                    else resultados
+                )
 
-                    if modelo == "BM25":
-
-                        doc = resultado
-                        score = resultado["score"]
-
-                    else:
-
-                        doc = resultado
-                        score = resultado["score"]
+                for posicao, doc in enumerate(registros, start=1):
 
                     titulo = doc.get("title") or "Título não disponível"
                     resumo = doc.get("abstract") or "Resumo não disponível"
+                    score = doc["score"]
 
                     with st.container(border=True):
 
@@ -322,6 +339,10 @@ if st.button("Pesquisar", type="primary"):
 
             st.exception(erro)
 
+
+# --------------------------------------------------
+# Rodapé
+# --------------------------------------------------
 
 st.divider()
 
