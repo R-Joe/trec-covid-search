@@ -25,7 +25,11 @@ st.set_page_config(
 )
 
 st.title("TREC-COVID Search")
-st.caption("Sistema de recuperação de informação — TREC-COVID, Round 1")
+st.caption(
+    "Desenvolvido por Renzo Ortiz como projeto acadêmico da disciplina "
+    "Sistemas de Recuperação de Informação e Recomendação — "
+    "Mestrado em Informática | PUC Minas."
+)
 
 st.markdown(
     "Explore a coleção de artigos científicos sobre COVID-19 "
